@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from temp-project!")
+"""Command-line RAG application."""

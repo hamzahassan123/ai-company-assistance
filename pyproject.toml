@@ -15,11 +15,14 @@ dependencies = [
     "langchain-core>=1.6.3",
     "langchain-google-genai>=4.4.0",
     "langchain-text-splitters>=1.1.2",
+    "langgraph>=1.2.11",
+    "langsmith>=0.12.5",
     "tqdm>=4.70.1",
 ]
 
 [project.scripts]
-temp-project = "temp_project:main"
+temp-project = "temp_project.main:main"
+temp-project-ingest = "temp_project.ingestion:main"
 
 [build-system]
 requires = ["uv_build>=0.12.2,<0.13.0"]

@@ -4,7 +4,11 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from temp_project.config import GEMINI_API_KEY, SALES_DATA_PATH, VECTOR_DB_PATH
+from temp_project.config import (
+    SALES_DATA_PATH,
+    VECTOR_DB_PATH,
+    require_gemini_api_key,
+)
 
 
 def loading_and_splitting() -> list[Document]:
@@ -33,16 +37,20 @@ def loading_and_splitting() -> list[Document]:
 
 def vector_DB() -> FAISS:
     """Build the FAISS index, save it locally, and return it for immediate use."""
-    if not GEMINI_API_KEY:
-        raise RuntimeError("GEMINI_API_KEY is not configured")
-
+    api_key = require_gemini_api_key()
     VECTOR_DB_PATH.mkdir(parents=True, exist_ok=True)
     document_chunks = loading_and_splitting()
     embeddings = GoogleGenerativeAIEmbeddings(
         model="gemini-embedding-2-preview",
         task_type="RETRIEVAL_DOCUMENT",
-        api_key=GEMINI_API_KEY,
+        api_key=api_key,
     )
     vector_store = FAISS.from_documents(document_chunks, embeddings)
     vector_store.save_local(folder_path=str(VECTOR_DB_PATH))
     return vector_store
+
+
+def main() -> None:
+    """Build or replace the local FAISS vector database."""
+    vector_DB()
+    print(f"Vector database saved to {VECTOR_DB_PATH}")
